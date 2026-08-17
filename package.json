@@ -1,7 +1,7 @@
 {
   "name": "@hiker8668/dsh-feishu",
   "description": "A dsh surface bundle: drive a DeepSeek Harness agent through a Feishu (Lark) bot via event subscription or long connection",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -74,7 +74,11 @@
     "@deepseek-ai/dsh-user-questions": "^0.1.0-rc.6"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-user-approval": { "optional": true },
-    "@deepseek-ai/dsh-user-questions": { "optional": true }
+    "@deepseek-ai/dsh-user-approval": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-user-questions": {
+      "optional": true
+    }
   }
 }
