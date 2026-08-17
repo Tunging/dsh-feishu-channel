@@ -138,6 +138,14 @@ dsh --profile feishu --mode longconn --workspaces-file C:\Users\admin\workspaces
 
 > 切换工作区时，当前会话会**重建 Agent**（历史对话上下文清空，属于正常行为）。未配置清单时发 `/workspace` 会提示先配 `--workspaces-file`。
 
+**在飞书里管理工作区**：发 `/workspace` 后，卡片底部有"⚙️ 管理"按钮（有权限时显示），点它可**新增 / 编辑 / 删除**工作区——用输入卡片填名字和路径，删除需二次确认。增删改会写回 `--workspaces-file` 指定的 JSON 文件，重启后仍生效。
+
+**权限**：默认只有 `--admins` 白名单里的用户能增删改；用 `--workspace-manage all` 可放开给所有用户。
+
+```powershell
+dsh --profile feishu --mode longconn --workspaces-file C:\Users\admin\workspaces.json --workspace-manage admin
+```
+
 ## 命令
 
 在飞书里给机器人发 `/` 开头的命令（本地处理，不发给 Agent）：
