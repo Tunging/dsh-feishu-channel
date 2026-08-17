@@ -1,4 +1,33 @@
+# ── 依赖 ─────────────────────────────────────────────
 node_modules/
+
+# ── 日志 ─────────────────────────────────────────────
 *.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── 运行时状态 ───────────────────────────────────────
 .dsh-feishu-state.json
+
+# ── 凭据 / 敏感信息（绝不提交）────────────────────────
+.env
+.env.*
+!.env.example
+feishu-credentials.json
+bots.json
+workspaces.json
+*.secret
+*.pem
+
+# ── 操作系统 ──────────────────────────────────────────
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── IDE / 编辑器 ─────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

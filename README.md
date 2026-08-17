@@ -214,3 +214,28 @@ pnpm test
 - 使用了 `@larksuiteoapi/node-sdk` 的 `im.message.create` / `im.reaction.*` / `wsClient`，这些方法的精确签名需在装有该 SDK 的环境里冒烟验证。
 - 飞书 `post`(md) 对部分 markdown 构造可能拒绝，代码已降级纯文本，但具体行为以线上为准。
 - bot 身份（open_id）默认通过 `/bot/v3/info` 自动探测（异步、尽力而为），也可用 `--bot-open-id`/`--bot-name` 显式指定。
+
+## Git 工作流
+
+仓库：`https://github.com/Tunging/dsh-feishu-channel.git`（分支 `master`）
+
+```powershell
+cd C:\Users\admin\Documents\_workspace\dsh-feishu
+
+# 查看状态
+git status
+
+# 提交改动
+git add -A
+git commit -m "改动说明"
+git push
+
+# 拉取远程更新
+git pull
+```
+
+**约定**：
+- 主分支 `master`，直接在上面提交（单人项目）。
+- 提交信息用中文，说明改动内容。
+- **不要提交** `node_modules/`、`*.log`、state 文件、以及任何含凭据的文件（`bots.json`、`workspaces.json`、`feishu-credentials.json`、`.env`）——`.gitignore` 已排除。
+- 改完代码后跑 `pnpm test` 确认单元测试通过再提交。
