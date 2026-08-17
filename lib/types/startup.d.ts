@@ -44,6 +44,7 @@ export interface FeishuStartup {
     groupPolicy: string;
     requireMention: boolean;
     allowBots: string;
+    workspaceManage: 'admin' | 'all';
     verificationToken?: string;
     encryptKey?: string;
     enableCards: boolean;

@@ -54,6 +54,8 @@ export interface Config {
     requireMention: boolean;
     /** Accept peer bot messages: 'none' | 'mentions' | 'all'. */
     allowBots: string;
+    /** Who can add/edit/delete workspaces in Feishu: 'admin' | 'all'. */
+    workspaceManage: 'admin' | 'all';
     /** Webhook verification token. */
     verificationToken?: string;
     /** Webhook signature encrypt key. */
