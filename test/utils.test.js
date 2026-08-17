@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { assistantText, chunkText, computeSignature, extractMediaRefs, looksLikeMarkdown, makeRateLimiter, sanitizeFilename, stripMarkdown, timingSafeEqual } from "../lib/utils.js";
+import { assistantText, chunkText, computeSignature, extractMediaRefs, looksLikeMarkdown, makeRateLimiter, sanitizeFilename, stripMarkdown, timingSafeEqual, validateWorkspace } from "../lib/utils.js";
 
 let passed = 0;
 function check(label, fn) {
@@ -78,6 +78,34 @@ check("makeRateLimiter enforces window", () => {
 	assert.equal(allow("k"), true);
 	assert.equal(allow("k"), false); // over limit
 	assert.equal(allow("other"), true); // different key unaffected
+});
+
+console.log("validateWorkspace tests");
+const wsList = [{ name: "A", path: "C:\\a" }, { name: "B", path: "C:\\b" }];
+const wsExists = (p) => p === "C:\\a" || p === "C:\\b" || p === "C:\\new";
+check("validateWorkspace rejects empty name", () => {
+	assert.equal(validateWorkspace({ name: "  ", path: "C:\\a", list: wsList, exists: wsExists }).ok, false);
+});
+check("validateWorkspace rejects empty path", () => {
+	assert.equal(validateWorkspace({ name: "C", path: "", list: wsList, exists: wsExists }).ok, false);
+});
+check("validateWorkspace rejects duplicate name", () => {
+	const r = validateWorkspace({ name: "A", path: "C:\\new", list: wsList, exists: wsExists });
+	assert.equal(r.ok, false);
+	assert.match(r.error, /已存在/);
+});
+check("validateWorkspace allows same name when editing self", () => {
+	const r = validateWorkspace({ name: "A", path: "C:\\a", list: wsList, editingIndex: 0, exists: wsExists });
+	assert.equal(r.ok, true);
+});
+check("validateWorkspace rejects nonexistent path", () => {
+	const r = validateWorkspace({ name: "C", path: "C:\\missing", list: wsList, exists: wsExists });
+	assert.equal(r.ok, false);
+	assert.match(r.error, /路径不存在/);
+});
+check("validateWorkspace returns trimmed value on success", () => {
+	const r = validateWorkspace({ name: "  C  ", path: "  C:\\new  ", list: wsList, exists: wsExists });
+	assert.deepEqual(r, { ok: true, value: { name: "C", path: "C:\\new" } });
 });
 
 console.log(`\n${passed} checks passed`);
