@@ -69,9 +69,9 @@
 - [x] **图片/文件收发完整管线**：入站下载（`im.messageResource.get`）、出站上传（`im.image.create`/`im.file.create`），当前只做了入站文本提示
 
 ### 第三批：会话/记忆
-- [ ] `/export` 导出对话为 markdown 发回飞书
-- [ ] 空闲会话清理（释放内存）
-- [ ] 启动注入项目背景（system prompt 定制）
+- [x] `/export` 导出对话为 markdown 发回飞书
+- [x] 空闲会话清理（释放内存）
+- [x] 启动注入项目背景（system prompt 定制）
 
 ### 第四批：命令扩展
 - [ ] `/model` 卡片切换模型
