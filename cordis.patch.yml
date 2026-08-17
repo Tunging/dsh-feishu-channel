@@ -1,0 +1,55 @@
+# The dsh-feishu bundle patch: a Feishu (Lark) bot surface over dsh-base.
+# It mounts no browser plugin. An ordinary provider plugin injects `cmdlineArgs`,
+# parses the Feishu app credentials and transport mode, then the runner creates
+# one Agent per Feishu chat through the core registry, forwards user messages via
+# `agent.followup`, and streams assistant replies back to Feishu.
+
+- id: system-prompt
+  config:
+    persona: >-
+      You are a coding agent powered by the {{model}} model. Your working directory is {{cwd}}.
+
+# The shared module-reload HMR row stays off; this is a long-running surface.
+- id: hmr
+  disabled: true
+
+- id: tools
+  config:
+    # Keep the same temporary process-wide Code Mode opt-in as the Web surface.
+    mode: !!js process.env.DSH_TOOLS_MODE
+
+- insert:
+    # Code Mode is a core execution capability, not a Web component.
+    - id: code-runtime
+      name: '@deepseek-ai/dsh-code-runtime-worker-thread'
+
+    - id: feishu-startup
+      name: '@you/dsh-feishu/startup'
+
+    # Reads its config from the ordinary feishuStartup provider.
+    - id: feishu-runner
+      name: '@you/dsh-feishu'
+      inject: [feishuStartup]
+      config:
+        appId: !!js ctx.feishuStartup.appId
+        appSecret: !!js ctx.feishuStartup.appSecret
+        mode: !!js ctx.feishuStartup.mode
+        port: !!js ctx.feishuStartup.port
+        host: !!js ctx.feishuStartup.host
+        path: !!js ctx.feishuStartup.path
+        domain: !!js ctx.feishuStartup.domain
+        workspaceRoot: !!js ctx.feishuStartup.workspaceRoot
+        stateFile: !!js ctx.feishuStartup.stateFile
+        botOpenId: !!js ctx.feishuStartup.botOpenId
+        botUserId: !!js ctx.feishuStartup.botUserId
+        botName: !!js ctx.feishuStartup.botName
+        allowedUsers: !!js ctx.feishuStartup.allowedUsers
+        allowAllUsers: !!js ctx.feishuStartup.allowAllUsers
+        groupPolicy: !!js ctx.feishuStartup.groupPolicy
+        requireMention: !!js ctx.feishuStartup.requireMention
+        allowBots: !!js ctx.feishuStartup.allowBots
+        verificationToken: !!js ctx.feishuStartup.verificationToken
+        encryptKey: !!js ctx.feishuStartup.encryptKey
+        enableCards: !!js ctx.feishuStartup.enableCards
+        enableReactions: !!js ctx.feishuStartup.enableReactions
+        textBatchDelayMs: !!js ctx.feishuStartup.textBatchDelayMs

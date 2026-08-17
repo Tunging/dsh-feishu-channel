@@ -1,0 +1,4 @@
+# pnpm settings (pnpm v10+ reads these from pnpm-workspace.yaml, not package.json).
+# Allow the protobufjs build script (a transitive dep of @larksuiteoapi/node-sdk).
+allowBuilds:
+  protobufjs: true
