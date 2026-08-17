@@ -9,16 +9,15 @@
 # 1) 扫码创建飞书机器人应用（自动保存凭据，无需开发者后台）
 dsh --profile feishu setup
 
-# 2) 启动 bot（长连接，无需公网回调地址）
-dsh --profile feishu --mode longconn
+# 2) 运行 dsh —— 飞书 bot 会自动启动（无需单独启动）
+dsh web
 
 # 3) 在飞书里 @ 机器人，开始对话
 ```
 
-> 已有 app_id / app_secret 时，直接：
-> `dsh --profile feishu --app-id cli_xxx --app-secret yyy --mode longconn`
->
-> 完整安装、飞书开放平台配置、CLI 选项见下文「安装与运行」。
+> - 飞书 bot 会随 dsh 一起自动启动（bundle 内置 autostart 插件，运行 dsh 时自动拉起 bot）。
+> - 已有 app_id / app_secret 时，也可直接 `dsh --profile feishu --app-id cli_xxx --app-secret yyy --mode longconn` 单独启动。
+> - 完整安装、飞书开放平台配置、CLI 选项见下文「安装与运行」。
 
 > 开发者 / 贡献者：项目结构、工作原理、关键设计点、测试见 [docs/feishu-channel-research.md](docs/feishu-channel-research.md)。
 

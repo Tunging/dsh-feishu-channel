@@ -53,3 +53,12 @@
         enableCards: !!js ctx.feishuStartup.enableCards
         enableReactions: !!js ctx.feishuStartup.enableReactions
         textBatchDelayMs: !!js ctx.feishuStartup.textBatchDelayMs
+
+    # Auto-start the Feishu bot when a host profile (e.g. web) mounts this
+    # bundle. The plugin skips spawning when the current profile is already the
+    # feishu profile (it IS the bot), so there is no recursion.
+    - id: feishu-autostart
+      name: '@tunging/dsh-feishu/autostart'
+      config:
+        profile: feishu
+        mode: longconn
