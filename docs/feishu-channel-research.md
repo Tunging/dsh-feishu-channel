@@ -206,3 +206,49 @@ hermes 的飞书是**网关插件**（`plugins/platforms/feishu/`），核心是
 **本仓库**
 - `dsh-feishu/`：DSH 飞书表面插件（已按 P0–P3 路线实施完成，见 README）
 - `T2_FeishuBot/`：早期独立 Python 飞书 webhook bot（可参考其 lark 调用与 config，但不走 DSH）
+
+---
+
+## 6. 项目结构 / 工作原理 / 关键设计点 / 测试
+
+> 以下内容原在 README，因属开发者/贡献者视角，移入本文档。
+
+### 6.1 目录结构
+
+```
+dsh-feishu/
+├── package.json          # 声明 dsh.bundle.patch 指向 cordis.patch.yml；test 脚本
+├── cordis.patch.yml      # 补丁层：插入 feishu-startup + feishu-runner
+├── lib/
+│   ├── index.js          # 主插件：飞书服务 + Agent 驱动 + 门控 + 审批卡片 + 会话持久化
+│   ├── startup.js        # 解析命令行/配置，提供 feishuStartup 服务
+│   ├── utils.js          # 纯工具函数（markdown/签名/限流/分片），可单测
+│   └── types/            # 类型声明
+├── test/                 # 单元测试（node 直接跑，无需安装依赖）
+└── docs/feishu-channel-research.md   # 本文档
+```
+
+### 6.2 工作原理
+
+- **表面机制**：仿照 `dsh-headless` / `dsh-web-app`，`cordis.patch.yml` 直接叠在 `dsh-base` 上。
+- **Agent 驱动**：`ctx.agents.create()` 建 Agent（或 `agents.resume()` 恢复持久化会话），`agent.followup(createUserMessage(...))` 投递消息。
+- **回复流回**：在 runner 的 `ctx` 上订阅 `session/event`（DSH 的会话事件流，按 `session.id` 路由到对应 chat），监听 `assistant/message` 调飞书 API 发回。
+- **会话映射**：`Map<chat_id, ChatAgent>`，每个飞书会话一个独立 DSH 会话，`chat_id → sessionId` 持久化到 state 文件。
+
+### 6.3 关键设计点
+
+| 关注点 | 处理方式 |
+|---|---|
+| 会话映射 | 每个 `chat_id` 一个独立 DSH 会话（`Map` 缓存），多用户/多群互不干扰 |
+| 持久化续聊 | 首次建会话后写 `state.chats[chat_id] = sessionId`；重启用 `ctx.agents.resume({ resumeSessionId })` 恢复 |
+| 回复流回 | runner `ctx.on("session/event", ...)` 按 `session.id` 路由，长回复分片发送 |
+| 审批/提问 | 复用 DSH 的 `approval/request` waterfall 与 `userQuestions.registerProvider` 契约，渲染成飞书卡片 |
+| 退出 | 长驻服务不调 `appExit`（那是 headless 一次性用的）；处理 SIGINT/SIGTERM 优雅关闭 |
+
+### 6.4 测试
+
+纯工具函数（markdown 检测/清理、签名、限流、分片）在 `lib/utils.js`，用 `node test/utils.test.js` 跑（零依赖）：
+
+```sh
+pnpm test
+```

@@ -20,27 +20,7 @@ dsh --profile feishu --mode longconn
 >
 > 完整安装、飞书开放平台配置、CLI 选项见下文「安装与运行」。
 
-## 目录结构
-
-```
-dsh-feishu/
-├── package.json          # 声明 dsh.bundle.patch 指向 cordis.patch.yml；test 脚本
-├── cordis.patch.yml      # 补丁层：插入 feishu-startup + feishu-runner
-├── lib/
-│   ├── index.js          # 主插件：飞书服务 + Agent 驱动 + 门控 + 审批卡片 + 会话持久化
-│   ├── startup.js        # 解析命令行/配置，提供 feishuStartup 服务
-│   ├── utils.js          # 纯工具函数（markdown/签名/限流/分片），可单测
-│   └── types/            # 类型声明
-├── test/                 # 单元测试（node 直接跑，无需安装依赖）
-└── docs/feishu-channel-research.md   # 架构研究与 hermes-agent 对照
-```
-
-## 工作原理
-
-- **表面机制**：仿照 `dsh-headless` / `dsh-web-app`，`cordis.patch.yml` 直接叠在 `dsh-base` 上。
-- **Agent 驱动**：`ctx.agents.create()` 建 Agent（或 `agents.resume()` 恢复持久化会话），`agent.followup(createUserMessage(...))` 投递消息。
-- **回复流回**：在 runner 的 `ctx` 上订阅 `session/event`（DSH 的会话事件流，按 `session.id` 路由到对应 chat），监听 `assistant/message` 调飞书 API 发回。
-- **会话映射**：`Map<chat_id, ChatAgent>`，每个飞书会话一个独立 DSH 会话，`chat_id → sessionId` 持久化到 state 文件。
+> 开发者 / 贡献者：项目结构、工作原理、关键设计点、测试见 [docs/feishu-channel-research.md](docs/feishu-channel-research.md)。
 
 ## 功能清单
 
@@ -222,54 +202,17 @@ dsh --profile feishu --mode longconn --bots-file C:\Users\admin\bots.json --work
 
 > 配置页只监听 `127.0.0.1`（本机），不对外网开放。保存后需重启 bot 生效；机器人切换也可在飞书里发 `/bot`。
 
-## 发布到 npm（正式安装方式）
+## 发布到 npm
 
-dsh 的正式安装是按**包名从 npm registry** 解析的（`dsh plugin --profile <name> install`），光放 GitHub 不够。发布步骤：
-
-1. **包名**：本包已命名为 `@tunging/dsh-feishu`（`package.json` 与 `cordis.patch.yml` 已同步）。若你的 npm scope 不是 `tunging`，请改成你真实拥有的 scope。
-2. **检查发布包**：
-   ```bash
-   npm pack --dry-run
-   ```
-   确认 `files` 字段已包含 `lib/*.js`、`cordis.patch.yml`、`lib/types/**/*.d.ts`。
-3. **登录并发布**：
-   ```bash
-   npm login
-   npm publish --access public
-   ```
-4. **在 profile 里安装**：
-   ```bash
-   dsh plugin --profile feishu add <你的包名>
-   dsh plugin --profile feishu install
-   ```
+dsh 的正式安装是按**包名从 npm registry** 解析的（`dsh plugin --profile <name> install`），光放 GitHub 不够。完整发布流程（首次发布、版本升级、常见问题）见 **[PUBLISHING.md](PUBLISHING.md)**。
 
 > 不想发布到 npm 时，可继续用本地 junction 方式安装（开发/自用）。
-
-> 📄 完整发布流程（首次发布、版本升级、常见问题）见 **[PUBLISHING.md](PUBLISHING.md)**。
 
 ## 社区与支持
 
 - 本插件依赖的 dsh 处于**开发者预览**阶段，未来可能有破坏性变更，请关注 [deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) 的更新。
 - 反馈 / bug 报告可到 [deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)。
 - 本仓库已按官方建议使用 `dsh-plugin` 话题，便于被 dsh 生态发现。
-
-## 关键设计点
-
-| 关注点 | 处理方式 |
-|---|---|
-| 会话映射 | 每个 `chat_id` 一个独立 DSH 会话（`Map` 缓存），多用户/多群互不干扰 |
-| 持久化续聊 | 首次建会话后写 `state.chats[chat_id] = sessionId`；重启用 `ctx.agents.resume({ resumeSessionId })` 恢复 |
-| 回复流回 | runner `ctx.on("session/event", ...)` 按 `session.id` 路由，长回复分片发送 |
-| 审批/提问 | 复用 DSH 的 `approval/request` waterfall 与 `userQuestions.registerProvider` 契约，渲染成飞书卡片 |
-| 退出 | 长驻服务不调 `appExit`（那是 headless 一次性用的）；处理 SIGINT/SIGTERM 优雅关闭 |
-
-## 测试
-
-纯工具函数（markdown 检测/清理、签名、限流、分片）在 `lib/utils.js`，用 `node test/utils.test.js` 跑（零依赖）：
-
-```sh
-pnpm test
-```
 
 ## 已知边界（需真实飞书/运行环境验证）
 
@@ -278,28 +221,3 @@ pnpm test
 - bot 身份（open_id）默认通过 `/bot/v3/info` 自动探测（异步、尽力而为），也可用 `--bot-open-id`/`--bot-name` 显式指定。
 - 媒体管线（`im.messageResource.get` / `im.image.create` / `im.file.create`）、`/model` 切换、`/code` 代码 Agent、`/remind`、事件订阅均需在真实环境冒烟验证。
 - 事件订阅（文档评论、会议邀请）需在飞书开放平台为应用配置对应事件订阅后才会收到事件。
-
-## Git 工作流
-
-仓库：`https://github.com/Tunging/dsh-feishu-channel.git`（分支 `master`）
-
-```powershell
-cd C:\Users\admin\Documents\_workspace\dsh-feishu
-
-# 查看状态
-git status
-
-# 提交改动
-git add -A
-git commit -m "改动说明"
-git push
-
-# 拉取远程更新
-git pull
-```
-
-**约定**：
-- 主分支 `master`，直接在上面提交（单人项目）。
-- 提交信息用中文，说明改动内容。
-- **不要提交** `node_modules/`、`*.log`、state 文件、以及任何含凭据的文件（`bots.json`、`workspaces.json`、`feishu-credentials.json`、`.env`）——`.gitignore` 已排除。
-- 改完代码后跑 `pnpm test` 确认单元测试通过再提交。
