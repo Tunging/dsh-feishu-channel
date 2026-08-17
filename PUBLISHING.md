@@ -95,12 +95,17 @@ dsh --profile feishu --mode longconn --bots-file C:\Users\admin\bots.json --work
 你的 npm 账号 scope 不是 `hiker8668`。把 `package.json` 和 `cordis.patch.yml` 里的 `@hiker8668` 改成你真实拥有的 scope，再发布。
 
 ### `dsh plugin add` 报 `ERR_PNPM_IGNORED_BUILDS`（protobufjs）
-本插件已在 `package.json` 里声明 `pnpm.onlyBuiltDependencies: ["protobufjs"]`，新版 pnpm 会自动放行。若你的 pnpm 版本较旧仍报此错，在 profile 目录手动批准一次：
+pnpm 出于安全默认忽略依赖的构建脚本。**pnpm v11 已移除 `onlyBuiltDependencies`，改用 `allowBuilds`**（写在 profile 的 `pnpm-workspace.yaml` 里）。这是**一次性**修复，之后永久生效：
 ```powershell
 cd C:\Users\admin\.dsh\profiles\feishu
 pnpm approve-builds
 ```
-或往 profile 的 `package.json` 加 `"pnpm": { "onlyBuiltDependencies": ["protobufjs"] }`。
+勾选 `protobufjs` 确认即可（会写进 `pnpm-workspace.yaml`）。或手动在 profile 的 `pnpm-workspace.yaml` 加：
+```yaml
+allowBuilds:
+  protobufjs: true
+```
+> 说明：`allowBuilds` 是根项目（profile）级设置，插件无法通过自身 `package.json` 替安装者放行；`onlyBuiltDependencies` 仅对 pnpm v10 用户有兜底作用。
 
 ### `git push` 报 `SEC_E_NO_CREDENTIALS`
 Git Credential Manager 在非交互环境取不到凭据。在**终端**里手动执行 `git push origin master`（会弹 GCM 登录窗口），或配置 PAT。
