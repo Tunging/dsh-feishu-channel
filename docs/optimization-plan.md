@@ -95,13 +95,16 @@
 - 飞书 `post`(md) 对部分 markdown 构造可能拒绝（已降级纯文本）
 - bot 身份（open_id）默认 `/bot/v3/info` 自动探测（异步、尽力而为），可用 `--bot-open-id`/`--bot-name` 指定
 - 凭据文件（`bots.json`/`workspaces.json`/`feishu-credentials.json`）是明文，已 gitignore，但需注意别外传
+- 第二批媒体管线（`im.messageResource.get` / `im.image.create` / `im.file.create`）与第四批 `/model` 切换、第六批 `/code` 代码 Agent、`/remind` 定时提醒、事件订阅均需在真实环境冒烟验证
+- 事件订阅（文档评论、会议邀请）需在飞书开放平台为应用配置对应事件订阅后才会收到事件
+- **Git push 待处理**：本地已提交 6 个 commit（第一批~第六批），因 Git Credential Manager 在非交互环境取不到 GitHub 凭据（`SEC_E_NO_CREDENTIALS`）未能推送，需在终端手动 `git push origin master`
 
 ---
 
 ## 5. 下一步建议
 
-从**第一批安全规则**开始（管理员/按群权限 + 工具白名单 + 危险命令确认 + 脱敏）。实现时：
-1. 先读 `lib/index.js` 现有门控（`admit`/`allowlistAllows`）和命令（`handleCommand`）结构
-2. 新增配置项（管理员、群规则、工具白名单）到 `Config` schema + `startup.js`
-3. 危险命令确认复用现有 `approval/request` 卡片机制
-4. 改完跑 `pnpm test` + `node --check`，再 `git add -A && git commit && git push`
+六批待办已全部实现并提交到本地 git（`81541bc`、`a9c855a`、`d2cca46`、`4f7f200`、`feca6cf`、`28b57cb`）。建议：
+1. 在终端执行 `git push origin master` 推送（需先解决 GitHub 凭据）
+2. 用真实飞书 bot 跑一次冒烟验证：收发文本/图片/文件、`/model`、`/code`、`/remind`、危险命令卡片确认、`/export`
+3. 如需事件订阅，在飞书开放平台配置事件订阅并开启 `--subscribe-events`
+4. 后续可考虑：把 `/remind` 换成集成 agent 作用域的 `dsh-schedule`、为媒体管线补充出站图片/文件的手动触发命令
