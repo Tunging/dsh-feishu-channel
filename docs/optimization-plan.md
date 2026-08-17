@@ -60,10 +60,10 @@
 ## 3. 待办优化清单（按优先级）
 
 ### 第一批：安全规则（推荐先做）
-- [ ] **管理员 + 按群细粒度权限**：设管理员 open_id；每个群可配 open/allowlist/blacklist/admin_only/disabled（参考 hermes `group_rules`）
-- [ ] **工具白名单**：限制 Agent 能用哪些工具（按会话/群配置）
-- [ ] **危险命令二次确认**：`rm`、`git push`、`git reset --hard` 等必须卡片确认
-- [ ] **敏感信息脱敏**：日志隐藏 app_secret、open_id
+- [x] **管理员 + 按群细粒度权限**：设管理员 open_id；每个群可配 open/allowlist/blacklist/admin_only/disabled（参考 hermes `group_rules`）
+- [x] **工具白名单**：限制 Agent 能用哪些工具（按会话/群配置）
+- [x] **危险命令二次确认**：`rm`、`git push`、`git reset --hard` 等必须卡片确认
+- [x] **敏感信息脱敏**：日志隐藏 app_secret、open_id
 
 ### 第二批：媒体增强
 - [ ] **图片/文件收发完整管线**：入站下载（`im.messageResource.get`）、出站上传（`im.image.create`/`im.file.create`），当前只做了入站文本提示
