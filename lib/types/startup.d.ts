@@ -1,9 +1,9 @@
 /**
- * @you/dsh-feishu/startup — the Feishu surface's command-line provider.
+ * @tunging/dsh-feishu/startup — the Feishu surface's command-line provider.
  * Two entry points: `setup` (scan-to-create onboarding that saves credentials
  * to `$DSH_HOME/feishu-credentials.json`) and the run command (credentials from
  * CLI flags, falling back to the saved file).
- * @module @you/dsh-feishu/startup
+ * @module @tunging/dsh-feishu/startup
  */
 import type { Context } from '@deepseek-ai/cordis';
 /** Stable Cordis plugin name. */

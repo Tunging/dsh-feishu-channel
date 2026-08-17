@@ -39,6 +39,15 @@ dsh-feishu/
 | 提问卡片 | `ask_user_question` 工具渲染成选项卡片 |
 | 会话持久化 | 重启后按 `chat_id` 恢复历史会话（`agents.resume`） |
 | 突发批处理 | 文本 debounce 合并，避免刷屏打爆 Agent |
+| 管理员/按群权限 | `--admins` + `--group-rules`（open/allowlist/blacklist/admin_only/disabled） |
+| 工具白名单 | `--allowed-tools` 限制 Agent 可用工具 |
+| 危险命令二次确认 | `--dangerous-commands` 命中规则时弹卡片确认（复用审批卡片） |
+| 日志脱敏 | 隐藏 app_secret / open_id / chat_id |
+| 媒体收发 | 入站下载（`im.messageResource.get`）、出站上传（`im.image.create`/`im.file.create`） |
+| 多 Agent | `/code` 路由到独立代码 Agent（`--code-agent-model`/`--code-agent-context`） |
+| 定时提醒 | `/remind` 定时推送到飞书 |
+| 健壮性 | 回复超时、回复长度上限、错误推送飞书、审计日志、空闲会话清理 |
+| 事件订阅 | `--subscribe-events` 处理文档评论、会议邀请等事件 |
 | 其他 | bot 自消息过滤、处理中 reaction（可关）、`--domain` feishu/lark |
 
 ## 安装与运行
@@ -71,8 +80,8 @@ cd dsh-feishu
 pnpm install
 pnpm test                 # 跑单元测试
 
-# 创建 feishu profile（把 @you/dsh-feishu 换成你的实际包名/路径）
-dsh plugin --profile feishu add @you/dsh-feishu
+# 创建 feishu profile
+dsh plugin --profile feishu add @tunging/dsh-feishu
 ```
 
 profile 目录 `$DSH_HOME/profiles/feishu/` 的 `package.json` 里 `dsh.profile.bundles` 应包含：
@@ -81,7 +90,7 @@ profile 目录 `$DSH_HOME/profiles/feishu/` 的 `package.json` 里 `dsh.profile.
 {
   "dsh": {
     "profile": {
-      "bundles": ["@deepseek-ai/dsh-base", "@you/dsh-feishu"]
+      "bundles": ["@deepseek-ai/dsh-base", "@tunging/dsh-feishu"]
     }
   }
 }
@@ -141,9 +150,14 @@ dsh --profile feishu --mode longconn --workspaces-file C:\Users\admin\workspaces
 |---|---|
 | `/workspace` | 弹出工作区选择卡片（免输入切换） |
 | `/bot` | 弹出机器人选择卡片（免输入切换，会重连） |
+| `/model` | 弹出模型选择卡片（切换模型） |
+| `/stop` | 中断当前生成 |
+| `/code <任务>` | 交给代码 Agent 处理 |
+| `/remind <时长> <内容>` | 定时提醒，如 `/remind 10m 喝水` |
 | `/status` | 查看当前工作区 / 模型 / 会话 |
 | `/debug` | 诊断信息：模式、app_id、domain、会话数、群策略等 |
 | `/reset` | 重置当前会话（清空上下文，重新开始） |
+| `/export` | 导出当前对话为 markdown 文件发回飞书 |
 | `/restart` | 重启飞书频道（插件内置，无需外部脚本） |
 | `/autostart on\|off` | 开启/关闭开机自启（插件内置，Windows） |
 | `/help` | 列出可用命令 |
@@ -191,6 +205,29 @@ dsh --profile feishu --mode longconn --bots-file C:\Users\admin\bots.json --work
 
 > 配置页只监听 `127.0.0.1`（本机），不对外网开放。保存后需重启 bot 生效；机器人切换也可在飞书里发 `/bot`。
 
+## 发布到 npm（正式安装方式）
+
+dsh 的正式安装是按**包名从 npm registry** 解析的（`dsh plugin --profile <name> install`），光放 GitHub 不够。发布步骤：
+
+1. **包名**：本包已命名为 `@tunging/dsh-feishu`（`package.json` 与 `cordis.patch.yml` 已同步）。若你的 npm scope 不是 `tunging`，请改成你真实拥有的 scope。
+2. **检查发布包**：
+   ```bash
+   npm pack --dry-run
+   ```
+   确认 `files` 字段已包含 `lib/*.js`、`cordis.patch.yml`、`lib/types/**/*.d.ts`。
+3. **登录并发布**：
+   ```bash
+   npm login
+   npm publish --access public
+   ```
+4. **在 profile 里安装**：
+   ```bash
+   dsh plugin --profile feishu add <你的包名>
+   dsh plugin --profile feishu install
+   ```
+
+> 不想发布到 npm 时，可继续用本地 junction 方式安装（开发/自用）。
+
 ## 关键设计点
 
 | 关注点 | 处理方式 |
@@ -211,9 +248,11 @@ pnpm test
 
 ## 已知边界（需真实飞书/运行环境验证）
 
-- 使用了 `@larksuiteoapi/node-sdk` 的 `im.message.create` / `im.reaction.*` / `wsClient`，这些方法的精确签名需在装有该 SDK 的环境里冒烟验证。
+- 使用了 `@larksuiteoapi/node-sdk` 的 `im.message.create` / `im.messageReaction.*` / `wsClient`，这些方法的精确签名需在装有该 SDK 的环境里冒烟验证。
 - 飞书 `post`(md) 对部分 markdown 构造可能拒绝，代码已降级纯文本，但具体行为以线上为准。
 - bot 身份（open_id）默认通过 `/bot/v3/info` 自动探测（异步、尽力而为），也可用 `--bot-open-id`/`--bot-name` 显式指定。
+- 媒体管线（`im.messageResource.get` / `im.image.create` / `im.file.create`）、`/model` 切换、`/code` 代码 Agent、`/remind`、事件订阅均需在真实环境冒烟验证。
+- 事件订阅（文档评论、会议邀请）需在飞书开放平台为应用配置对应事件订阅后才会收到事件。
 
 ## Git 工作流
 

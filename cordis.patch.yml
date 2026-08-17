@@ -24,11 +24,11 @@
       name: '@deepseek-ai/dsh-code-runtime-worker-thread'
 
     - id: feishu-startup
-      name: '@you/dsh-feishu/startup'
+      name: '@tunging/dsh-feishu/startup'
 
     # Reads its config from the ordinary feishuStartup provider.
     - id: feishu-runner
-      name: '@you/dsh-feishu'
+      name: '@tunging/dsh-feishu'
       inject: [feishuStartup]
       config:
         appId: !!js ctx.feishuStartup.appId
