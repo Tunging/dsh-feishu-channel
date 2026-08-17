@@ -33,6 +33,21 @@
     "test": "node test/utils.test.js && node test/onboard.test.js"
   },
   "license": "MIT",
+  "author": "Tunging",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tunging/dsh-feishu-channel.git"
+  },
+  "homepage": "https://github.com/Tunging/dsh-feishu-channel#readme",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "feishu",
+    "lark",
+    "bot",
+    "cordis",
+    "channel"
+  ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
