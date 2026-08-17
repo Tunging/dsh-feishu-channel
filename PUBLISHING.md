@@ -77,7 +77,9 @@ dsh --profile feishu --mode longconn --bots-file C:\Users\admin\bots.json --work
 
 ### GitHub Topics
 在仓库页右上角 **About → ⚙️ → Topics** 添加：
-`dsh`、`deepseek-harness`、`feishu`、`lark`、`bot`、`cordis`、`channel`
+`dsh-plugin`、`dsh`、`deepseek-harness`、`feishu`、`lark`、`bot`、`cordis`、`channel`
+
+> `dsh-plugin` 是官方指定的插件发现话题（见 deepseek-harness README：「为你的插件仓库添加 `dsh-plugin` 话题，便于被发现」），务必加上。
 
 ### README
 `README.md` 已包含功能清单、命令、配置项、安装/发布步骤，保持更新即可。

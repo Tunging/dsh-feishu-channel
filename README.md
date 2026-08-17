@@ -230,6 +230,12 @@ dsh 的正式安装是按**包名从 npm registry** 解析的（`dsh plugin --pr
 
 > 📄 完整发布流程（首次发布、版本升级、常见问题）见 **[PUBLISHING.md](PUBLISHING.md)**。
 
+## 社区与支持
+
+- 本插件依赖的 dsh 处于**开发者预览**阶段，未来可能有破坏性变更，请关注 [deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) 的更新。
+- 反馈 / bug 报告可到 [deepseek-harness Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)。
+- 本仓库已按官方建议使用 `dsh-plugin` 话题，便于被 dsh 生态发现。
+
 ## 关键设计点
 
 | 关注点 | 处理方式 |
