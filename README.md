@@ -228,6 +228,8 @@ dsh 的正式安装是按**包名从 npm registry** 解析的（`dsh plugin --pr
 
 > 不想发布到 npm 时，可继续用本地 junction 方式安装（开发/自用）。
 
+> 📄 完整发布流程（首次发布、版本升级、常见问题）见 **[PUBLISHING.md](PUBLISHING.md)**。
+
 ## 关键设计点
 
 | 关注点 | 处理方式 |
