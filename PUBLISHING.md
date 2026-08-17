@@ -92,7 +92,15 @@ dsh --profile feishu --mode longconn --bots-file C:\Users\admin\bots.json --work
 未登录。先 `npm login`。
 
 ### `npm publish` 报 scope 不存在 / 无权
-你的 npm 账号 scope 不是 `tunging`。把 `package.json` 和 `cordis.patch.yml` 里的 `@hiker8668` 改成你真实拥有的 scope，再发布。
+你的 npm 账号 scope 不是 `hiker8668`。把 `package.json` 和 `cordis.patch.yml` 里的 `@hiker8668` 改成你真实拥有的 scope，再发布。
+
+### `dsh plugin add` 报 `ERR_PNPM_IGNORED_BUILDS`（protobufjs）
+本插件已在 `package.json` 里声明 `pnpm.onlyBuiltDependencies: ["protobufjs"]`，新版 pnpm 会自动放行。若你的 pnpm 版本较旧仍报此错，在 profile 目录手动批准一次：
+```powershell
+cd C:\Users\admin\.dsh\profiles\feishu
+pnpm approve-builds
+```
+或往 profile 的 `package.json` 加 `"pnpm": { "onlyBuiltDependencies": ["protobufjs"] }`。
 
 ### `git push` 报 `SEC_E_NO_CREDENTIALS`
 Git Credential Manager 在非交互环境取不到凭据。在**终端**里手动执行 `git push origin master`（会弹 GCM 登录窗口），或配置 PAT。

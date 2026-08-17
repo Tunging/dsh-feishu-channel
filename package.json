@@ -53,6 +53,11 @@
       "patch": "./cordis.patch.yml"
     }
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "protobufjs"
+    ]
+  },
   "dependencies": {
     "commander": "^15.0.0",
     "@larksuiteoapi/node-sdk": "^1.40.0",
