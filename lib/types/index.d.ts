@@ -1,6 +1,6 @@
 /**
- * @tunging/dsh-feishu — a Feishu (Lark) bot surface for DeepSeek Harness.
- * @module @tunging/dsh-feishu
+ * @hiker8668/dsh-feishu — a Feishu (Lark) bot surface for DeepSeek Harness.
+ * @module @hiker8668/dsh-feishu
  */
 import type { Context } from '@deepseek-ai/cordis';
 import z from '@deepseek-ai/schemastery';

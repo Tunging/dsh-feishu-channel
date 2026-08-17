@@ -31,9 +31,9 @@ DSH 没有暴露给外部频道的"通用网关"抽象，它的接入点叫**表
     - id: code-runtime        # Code Mode 是核心执行能力，不是 Web 组件
       name: '@deepseek-ai/dsh-code-runtime-worker-thread'
     - id: feishu-startup      # 解析命令行 → 发布 feishuStartup 服务
-      name: '@tunging/dsh-feishu/startup'
+      name: '@hiker8668/dsh-feishu/startup'
     - id: feishu-runner       # 主插件，inject feishuStartup
-      name: '@tunging/dsh-feishu'
+      name: '@hiker8668/dsh-feishu'
       inject: [feishuStartup]
       config: { appId: !!js ctx.feishuStartup.appId, ... }
 ```

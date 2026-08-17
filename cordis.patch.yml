@@ -24,11 +24,11 @@
       name: '@deepseek-ai/dsh-code-runtime-worker-thread'
 
     - id: feishu-startup
-      name: '@tunging/dsh-feishu/startup'
+      name: '@hiker8668/dsh-feishu/startup'
 
     # Reads its config from the ordinary feishuStartup provider.
     - id: feishu-runner
-      name: '@tunging/dsh-feishu'
+      name: '@hiker8668/dsh-feishu'
       inject: [feishuStartup]
       config:
         appId: !!js ctx.feishuStartup.appId
@@ -58,7 +58,7 @@
     # bundle. The plugin skips spawning when the current profile is already the
     # feishu profile (it IS the bot), so there is no recursion.
     - id: feishu-autostart
-      name: '@tunging/dsh-feishu/autostart'
+      name: '@hiker8668/dsh-feishu/autostart'
       config:
         profile: feishu
         mode: longconn

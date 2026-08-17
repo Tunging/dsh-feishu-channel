@@ -1,5 +1,5 @@
 {
-  "name": "@tunging/dsh-feishu",
+  "name": "@hiker8668/dsh-feishu",
   "description": "A dsh surface bundle: drive a DeepSeek Harness agent through a Feishu (Lark) bot via event subscription or long connection",
   "version": "0.1.0",
   "type": "module",

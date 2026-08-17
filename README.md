@@ -77,7 +77,7 @@ pnpm install
 pnpm test                 # 跑单元测试
 
 # 创建 feishu profile
-dsh plugin --profile feishu add @tunging/dsh-feishu
+dsh plugin --profile feishu add @hiker8668/dsh-feishu
 ```
 
 profile 目录 `$DSH_HOME/profiles/feishu/` 的 `package.json` 里 `dsh.profile.bundles` 应包含：
@@ -86,7 +86,7 @@ profile 目录 `$DSH_HOME/profiles/feishu/` 的 `package.json` 里 `dsh.profile.
 {
   "dsh": {
     "profile": {
-      "bundles": ["@deepseek-ai/dsh-base", "@tunging/dsh-feishu"]
+      "bundles": ["@deepseek-ai/dsh-base", "@hiker8668/dsh-feishu"]
     }
   }
 }
