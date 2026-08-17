@@ -3,6 +3,23 @@
 一个 DSH **表面（surface）bundle**：在 `dsh-base` 之上叠加一层，让飞书机器人驱动 DSH 的 Agent。
 每个飞书会话（chat_id）对应一个独立的 DSH 会话，用户消息经 `agent.followup` 投递，assistant 回复经 DSH 的 `session/event` 事件流回飞书。
 
+## 快速开始
+
+```powershell
+# 1) 扫码创建飞书机器人应用（自动保存凭据，无需开发者后台）
+dsh --profile feishu setup
+
+# 2) 启动 bot（长连接，无需公网回调地址）
+dsh --profile feishu --mode longconn
+
+# 3) 在飞书里 @ 机器人，开始对话
+```
+
+> 已有 app_id / app_secret 时，直接：
+> `dsh --profile feishu --app-id cli_xxx --app-secret yyy --mode longconn`
+>
+> 完整安装、飞书开放平台配置、CLI 选项见下文「安装与运行」。
+
 ## 目录结构
 
 ```
