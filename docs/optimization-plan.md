@@ -66,7 +66,7 @@
 - [x] **敏感信息脱敏**：日志隐藏 app_secret、open_id
 
 ### 第二批：媒体增强
-- [ ] **图片/文件收发完整管线**：入站下载（`im.messageResource.get`）、出站上传（`im.image.create`/`im.file.create`），当前只做了入站文本提示
+- [x] **图片/文件收发完整管线**：入站下载（`im.messageResource.get`）、出站上传（`im.image.create`/`im.file.create`），当前只做了入站文本提示
 
 ### 第三批：会话/记忆
 - [ ] `/export` 导出对话为 markdown 发回飞书
