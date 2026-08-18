@@ -112,6 +112,22 @@ dsh --profile feishu --app-id cli_xxx --app-secret yyy --mode longconn
 
 完整 CLI 选项见 `dsh --profile feishu --help`。
 
+### 4. 单进程运行（Web + 飞书 一体，推荐）
+
+把 `@hiker8668/dsh-feishu` 加进 **web profile**，飞书 bot 会直接在 web 的 dsh 进程里跑（**不再 spawn 独立子进程**）：
+
+```powershell
+# 把 bundle 加进 web profile
+dsh plugin --profile web add @hiker8668/dsh-feishu
+dsh plugin --profile web install
+
+# 启动 web，同时传入飞书参数（飞书 bot 在进程内运行）
+dsh web --mode longconn --allowed-users ou_xxx,ou_yyy
+```
+
+> - 飞书凭据来自 `setup` 保存的 `feishu-credentials.json`，无需再传 `--app-id`/`--app-secret`。
+> - 若你之前用的是旧版 `feishu-autostart`（独立子进程）方案，请从 web profile 的 `dsh.profile.bundles` 里移除 `@hiker8668/dsh-feishu/autostart`，避免重复启动。
+
 ## 工作区切换（免输入）
 
 给 bot 配一份工作区清单，然后在飞书里发 `/workspace`，bot 会弹出一张**可点击的卡片**，点按钮就切换——不用手动敲路径。
